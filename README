@@ -8,3 +8,12 @@
   versa.
 3. Changed the interrupt switch statement
 4. Placed madLibs code in main
+
+//Lab3
+1. Implemented read sector by utilizing the mod and div functions to
+calculate parameters which were then passed to interrupt 19.
+2. Implented write sector with the same format except with a different ax.
+3. Implented the clearScreen with associated logic to check parameter bounds,
+screen initialization and interrupt 16.
+4. Modified the handleinterrupt21 switch statement.
+5. Created unique color scheme for logo and saved configuration to separate file.
