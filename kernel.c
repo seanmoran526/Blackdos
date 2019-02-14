@@ -136,7 +136,7 @@ void readInt(int* n)
     while(num[i] != 0 && i<6)
     {
         *n = (*n) * 10 + num[i] - '0';
-        i++;
+        ++i;
     }
 }
 
@@ -150,7 +150,7 @@ void writeInt(int n, int opSelection)
     {
         remainder = mod(n,10);
         n = div(n,10);
-        num[i] = r + '0';
+        num[i] = remainder + '0';
         --i;
     }
     ++i;
