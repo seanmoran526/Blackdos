@@ -200,7 +200,7 @@ void clearScreen(int back,int fore)
     }
     printString(blanks, 0);
     interrupt(OP_SCREEN,512,0,0,0);
-    if((back>0 && fore>0)
+    if(back>0 && fore>0)
     {
         if(back<10 && fore<18)
         {
@@ -217,8 +217,10 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
       case 2: readSector(bx,cx); break;
       case 6: writeSector(bx,cx); break;
       case 12: clearScreen(bx,cx); break;
-      case 13: writeInt(bx); break;
+      case 13: writeInt(bx,cx); break;
       case 14: readInt(bx); break;
       default: printString("General BlackDOS error.\r\n\0", 0);
    }
 }
+       
+
