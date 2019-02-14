@@ -1,0 +1,10 @@
+1.  I assembled and load the bootload.
+2.  I inserted the logic to print a char string to the console
+3.  I inserted the logic to switch between printer and screen display.
+4.  I deleted the printString prototype and calls.
+//Lab 2
+1. Made readString function to take in user input and place it in an array
+2. Made readInt and writeInt for integer to ascii conversion and vice
+  versa.
+3. Changed the interrupt switch statement
+4. Placed madLibs code in main
