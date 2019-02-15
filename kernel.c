@@ -25,18 +25,18 @@
 /* 3460:4/526 BlackDOS2020 kernel, Version 1.01, Spring 2018.             */
 
 /* Interrupt 33 function constants */
-const int PRINTSTR = 0;
-const int READSTR = 1;
-const int WRITEINT = 13;
-const int READINT = 14;
-const int READSECT = 2;
-const int WRITESECT = 6;
-const int CLRSCREEN = 12;
+int PRINTSTR = 0;
+int READSTR = 1;
+int WRITEINT = 13;
+int READINT = 14;
+int READSECT = 2;
+int WRITESECT = 6;
+int CLRSCREEN = 12;
 /* Interrupts */
-const int OP_SCREEN = 16;
-const int OP_PRINTER = 23;
-const int IP_KEY = 22;
-const int RW_SECT = 19;
+int OP_SCREEN = 16;
+int OP_PRINTER = 23;
+int IP_KEY = 22;
+int RW_SECT = 19;
 
 /* Prototypes */
 void handleInterrupt21(int,int,int,int);
@@ -129,9 +129,9 @@ void readString(char* input)
 
 void readInt(int* n)
 {
+    int i = 0; 
     char num[6];
     readString(num);
-    int i = 0;
     *n = 0;
     while(num[i] != 0 && i<6)
     {
@@ -144,8 +144,8 @@ void writeInt(int n, int opSelection)
 {
     char num[6];
     int remainder;
-    num[5] = 0x0;
     int i = 4;
+    num[5] = 0x0; 
     while(n > 0)
     {
         remainder = mod(n,10);
@@ -192,8 +192,8 @@ void writeSector(char* buffer, int sector)
 void clearScreen(int back,int fore)
 {
     char blanks[25];
-    blanks[25] = '\0';
     int i;
+    blanks[25] = '\0'; 
     for(i=0; i<24; ++i)
     {
         blanks[i] = "\r\n";
@@ -204,7 +204,7 @@ void clearScreen(int back,int fore)
     {
         if(back<10 && fore<18)
         {
-            interrupt(OP_SCREEN, 1536, 4096*(back–1)+256*(fore–1), 0, 6223);
+            interrupt(OP_SCREEN, 1536, 4096*(back-1)+256*(fore-1), 0, 6223);
         }
     }
 }
@@ -223,4 +223,3 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
    }
 }
        
-
