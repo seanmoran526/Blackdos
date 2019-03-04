@@ -50,24 +50,23 @@ int div(int, int);
 void readString(char*);
 void writeSector(char*,int);
 void clearScreen(int,int);
+void error(int);
 
 void main()
 {
     char buffer[512]; int i;
     makeInterrupt21();
-    for (i = 0; i < 512; i++) buffer[i] = 0;
-    buffer[0] = 1;
-    buffer[1] = 12;
-    interrupt(33,6,buffer,258,0);
+
+    /* Step 0 –config file */
+    interrupt(33,2,buffer,258,0);
     interrupt(33,12,buffer[0]+1,buffer[1]+1,0);
     printLogo();
-    interrupt(33,READSECT,buffer,30,0);
-    interrupt(33,PRINTSTR,buffer,0,0);
+
     while (1);
 }
 void printString(char* chArr, int printer)
 {
-    /* Defaults to screen output interrupt 16 */ 
+    /* Defaults to screen output interrupt 16 */
     int opDest = OP_SCREEN;
     int i;
     int offset = 14*256;
@@ -129,7 +128,7 @@ void readString(char* input)
 
 void readInt(int* n)
 {
-    int i = 0; 
+    int i = 0;
     char num[6];
     readString(num);
     *n = 0;
@@ -145,7 +144,7 @@ void writeInt(int n, int opSelection)
     char num[6];
     int remainder;
     int i = 4;
-    num[5] = 0x0; 
+    num[5] = 0x0;
     while(n > 0)
     {
         remainder = mod(n,10);
@@ -193,7 +192,7 @@ void clearScreen(int back,int fore)
 {
     char blanks[25];
     int i;
-    blanks[25] = '\0'; 
+    blanks[25] = '\0';
     for(i=0; i<24; ++i)
     {
         blanks[i] = "\r\n";
@@ -208,9 +207,20 @@ void clearScreen(int back,int fore)
         }
     }
 }
+
+void error(int bx)
+{
+    switch(bx)
+    {
+        case 0: interrupt(33,PRINTSTR,"File not found. \r\n\0",0,0); break;
+        case 1: interrupt(33,PRINTSTR,"Bad file name. \r\n\0",0,0); break;
+        case 2: interrupt(33,PRINTSTR,"Disk full \r\n\0",0,0); break;
+        default: interrupt(33,PRINTSTR,"General error \r\n\0",0,0);
+    }
+}
 void handleInterrupt21(int ax, int bx, int cx, int dx)
 {
-   switch(ax) 
+   switch(ax)
    {
       case 0: printString(bx,cx); break;
       case 1: readString(bx); break;
@@ -219,7 +229,7 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
       case 12: clearScreen(bx,cx); break;
       case 13: writeInt(bx,cx); break;
       case 14: readInt(bx); break;
+      case 15: error(bx); break;
       default: printString("General BlackDOS error.\r\n\0", 0);
    }
 }
-       
