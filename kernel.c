@@ -343,36 +343,59 @@ void deleteFile(char* fname)
     readSector(map, 256);
     
     int i, j;
-    int sector;
+    int limName= 7;
+    char lastChar = '\0';
     char* found = -1;
-    
-    while(dirPtr < endDir)
+    for(i=0; i<8; ++i)
     {
-         if(*dir!=0)
-         {
-            i=0;
-            while(i<8 && dirPtr[i] == fname[i]){++i;}
-            if(i<8)
-                dirPtr += 32;
-            else
-                found = dirPtr +8;
-          }
+        if(fname[i] == lastChar)
+        {
+            limName = i;
+            break;
+        }
+    }
+    if(i==8)
+       lastChar = fname[7];
+    while(found<0 || dirPtr<endDir)
+    {
+        if(dirPtr[limName] != fname[limName] || dirPtr[0]== 0)
+            dirPtr +=32;
+        for(i=1; i<limName; ++i)
+        {
+            if(dirPtr[i]!=fname[i])
+            {
+                dirPtr +=32;
+                i=-1;
+                break;
+            }
+        }
+        if(i>0)
+        {
+            *found=0;
+            found= dirPtr+8;
+        }
+    }
+    if(dirPtr==endDir)
+    {
+        interrupt(33,15,0,0,0);
+        return;
     }
      j=0;
      if(found>0)
      {
-         *found = 0x00;
          while(found[j]!= 0 && j<24)
          {
-             map[found[j]] = 0xFF;
+             map[found[j]] = 0;
              ++j;
          }
+         writeSector(dir, 257);
+         writeSector(map, 256);
      }
      else
      {
          interrupt(33,15,0,0,0);
-         return;
      }
+    return;
 }
 
 
