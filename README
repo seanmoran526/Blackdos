@@ -17,3 +17,12 @@ calculate parameters which were then passed to interrupt 19.
 screen initialization and interrupt 16.
 4. Modified the handleinterrupt21 switch statement.
 5. Created unique color scheme for logo and saved configuration to separate file.
+
+//Lab4
+1. Updated compileOS.sh
+2. Dowloaded and compiled loadFile.c
+3. Set up all interrupt handling.
+4. Implemented error function
+5. Implemented readFile and tested
+6. Implemeneted writeFile and tested
+7. Tested 3 error functionalities.
