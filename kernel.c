@@ -277,7 +277,7 @@ void writeFile(char* fname, char* buffer, int numSect)
     readSector(map, 256);
     char* openDir=-1;
     int sector;
-    int i, j;
+    int i;
     int limName= 7;
     char lastChar = '\0';
     for(i=0; i<8; ++i)
