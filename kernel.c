@@ -224,7 +224,7 @@ void readFile(char* fname, char* buffer, int* size)
         else
         {
             i=0;
-            while(i<8 && dir[i] != fname[i]){++i;}
+            while(i<8 && dir[i] == fname[i]){++i;}
             if(i<8)
                 dir += 32;
             else
@@ -237,7 +237,6 @@ void readFile(char* fname, char* buffer, int* size)
         while(j<24 && found[j] != 0x00;)
         {
             readSector(buffer, found[j]);
-            ++foundIndex;
             buffer+=512;
             ++j;
         }
