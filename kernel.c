@@ -217,25 +217,41 @@ void readFile(char* fname, char* buffer, int* size)
     char* endDir = &dir[511];
     readSector(dir, 257);
     int i, j;
-    char* found=-1;
-
-    while(found<0 && dirPtr<endDir)
+    int limName= 7;
+    char lastChar = '\0';
+    char* found = -1;
+    for(i=0; i<8; ++i)
     {
-        if(*dirPtr==0)
-            dirPtr += 32;
-
-        else
+        if(fname[i] == lastChar)
         {
-            i=0;
-            while(i<8 && dir[i] == fname[i]){++i;}
-            if(i<8)
-                dirPtr += 32;
-
-            else
-                found = dirPtr + 8;
+            limName = i;
+            break;
         }
     }
-    if(found>0)
+    if(i==8)
+       lastChar = fname[7];
+    while(found<0 || dirPtr<endDir)
+    {
+        if(dirPtr[limName] != fname[limName] || dirPtr[0]== 0)
+            dirPtr +=32;
+        for(i=1; i<limName; ++i)
+        {
+            if(dirPtr[i]!=fname[i])
+            {
+                dirPtr +=32;
+                i=-1;
+                break;
+            }
+        }
+        if(i>0)
+            found= dirPtr+8;
+    }
+    if(dirPtr==endDir)
+    {
+        interrupt(33,15,0,0,0);
+        return;
+    }
+    else
     {
         j=0;
         while(j<24 && found[j] != 0x00)
@@ -245,9 +261,6 @@ void readFile(char* fname, char* buffer, int* size)
             ++j;
         }
     }
-    else
-        interrupt(33, 15, 0, 0, 0);
-    
     *size = j;
     return;
 }
