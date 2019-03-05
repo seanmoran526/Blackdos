@@ -56,15 +56,23 @@ void writeFile(char*, char*, int);
 void deleteFile(char*);
 void main()
 {
-    char buffer[512]; int i;
-    makeInterrupt21();
-
-    /* Step 0 –config file */
-    interrupt(33,2,buffer,258,0);
-    interrupt(33,12,buffer[0]+1,buffer[1]+1,0);
-    printLogo();
-
-    while (1);
+ char buffer[12288]; int size;
+ makeInterrupt21();
+ /* Step 0 – config file */
+ interrupt(33,2,buffer,258,0);
+ interrupt(33,12,buffer[0]+1,buffer[1]+1,0);
+ printLogo();
+ /* Step 1 – load/edit/print file */
+ interrupt(33,3,"spc03\0",buffer,&size);
+ buffer[7] = ‘2’; buffer[8] = ‘0’;
+ buffer[9] = ‘1’; buffer[10] = ‘9’;
+ interrupt(33,0,buffer,0,0);
+ interrupt(33,0,”\r\n\0”,0,0);
+ /* Step 2 – write revised file */
+ interrupt(33,8,"spr19\0",buffer,size);
+ /* Step 3 – delete original file */
+ interrupt(33,7,"spc03\0",0,0);
+ while (1) ;
 }
 void printString(char* chArr, int printer)
 {
