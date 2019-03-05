@@ -51,7 +51,9 @@ void readString(char*);
 void writeSector(char*,int);
 void clearScreen(int,int);
 void error(int);
-
+void readFile(char*, char*, int*);
+void writeFile(char*, char*, int);
+void deleteFile(char*);
 void main()
 {
     char buffer[512]; int i;
@@ -208,6 +210,44 @@ void clearScreen(int back,int fore)
     }
 }
 
+void readFile(char* fname, char* buffer, int* size)
+{
+    char dir[512];
+    readSector(dir, 257);
+    int i=0;
+    int foundIndex=-1;
+    while(foundIndex<0 && i<512)
+    {    
+        int j=0;
+        while(j<8 && dir[i++] != fname[j++]){}
+        if(j==8)
+            foundIndex = i;
+        else
+            i = i - j + 32;
+    }
+    if(foundIndex>0)
+    {
+        while(dir[foundIndex]>0 && foundIndex%32 != 0)
+        {
+            readSector(buffer, dir[foundIndex]);
+            ++foundIndex;
+            buffer += 512;
+        }
+    else
+        interrupt(33, 15, 0, 0, 0);
+    return;
+}
+
+void writeFile(char* fname, char* buffer, int numSect)
+{
+    
+}
+
+void deleteFile(char* fname)
+{
+
+}
+
 void error(int bx)
 {
     switch(bx)
@@ -218,6 +258,8 @@ void error(int bx)
         default: interrupt(33,PRINTSTR,"General error \r\n\0",0,0);
     }
 }
+
+
 void handleInterrupt21(int ax, int bx, int cx, int dx)
 {
    switch(ax)
@@ -225,7 +267,10 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
       case 0: printString(bx,cx); break;
       case 1: readString(bx); break;
       case 2: readSector(bx,cx); break;
+      case 3: readFile(bx,cx,dx); break;
       case 6: writeSector(bx,cx); break;
+      case 7: deleteFile(bx); break;
+      case 8: writeFile(bx,cx,dx); break;
       case 12: clearScreen(bx,cx); break;
       case 13: writeInt(bx,cx); break;
       case 14: readInt(bx); break;
