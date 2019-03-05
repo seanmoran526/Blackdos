@@ -262,7 +262,7 @@ void writeFile(char* fname, char* buffer, int numSect)
          if(*dir!=0)
          {
             i=0;
-            while(i<8 && dir[i] != fname[i]){++i;}
+            while(i<8 && dir[i] == fname[i]){++i;}
             if(i<8)
                 dir += 32;
             else
@@ -303,7 +303,42 @@ void writeFile(char* fname, char* buffer, int numSect)
     writeSector(map, 256);
 void deleteFile(char* fname)
 {
-
+    char dir[512];
+    char map[512];
+    char endDir* = &dir[511];
+    readSector(dir, 257);
+    readSector(map, 256);
+    int i, j;
+    int sector;
+    char* found = -1;
+    while(dir < endDir)
+    {
+         if(*dir!=0)
+         {
+            i=0;
+            while(i<8 && dir[i] == fname[i]){++i;}
+            if(i<8)
+                dir += 32;
+            else
+                found = dir+8;
+              
+     }
+     j=0;
+     if(found>0)
+     {
+         *found = 0x00;
+         while(found[j]!= 0 && j<24)
+         {
+             map[found[j]] = 0xFF;
+             ++j;
+         }
+     }
+     else
+     {
+         interrupt(33,15,0,0,0);
+         return;
+     }
+   
 }
 
 void error(int bx)
