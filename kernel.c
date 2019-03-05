@@ -217,14 +217,14 @@ void readFile(char* fname, char* buffer, int* size)
     readSector(dir, 257);
     int i, j;
     char* found=-1;
-    while(found<0 && dir<=endDir)
+    while(found<0 && dir<endDir)
     {    
         if(*dir==0)
             dir += 32;
         else
         {
             i=0;
-            while(i==8 && dir[i] != fname[i]){++i;}
+            while(i<8 && dir[i] != fname[i]){++i;}
             if(i<8)
                 dir += 32;
             else
@@ -254,25 +254,45 @@ void writeFile(char* fname, char* buffer, int numSect)
     char endDir* = &dir[511];
     readSector(dir, 257);
     readSector(map, 256);
-    int i=0;
-    while(i<512 && map[i] == 0xFF)
+    int i;
+    char* openDir=-1;
+    while(dir < endDir)
     {
-        if(i<512)
-        {
-            map += i;
-        } 
-        else
-        {
-            interrupt(33,15,2,0,0);
-            return;
-        }
-        ++i;
+         if(*dir!=0)
+         {
+            i=0;
+            while(i<8 && dir[i] != fname[i]){++i;}
+            if(i<8)
+                dir += 32;
+            else
+            {
+                interrupt(33,15,1,0,0);
+                return;
+            }   
+         }
+         else
+         {
+            if(openDir<0)
+                openDir=dir;
+            dir += 32; 
+         }
     }
-    i=0;
-    while(dir <= endDir)
+    do
     {
-           
-    }
+        i=0;
+        while(i<512 && map[i] == 0xFF){++i;}
+            if(i<512)
+            {
+                map += i;
+            } 
+            else
+            {
+                interrupt(33,15,2,0,0);
+                return;
+            }
+        *map=0xFF;
+        openDir
+        }while(*buffer==0);
 void deleteFile(char* fname)
 {
 
