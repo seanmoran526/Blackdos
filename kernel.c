@@ -272,35 +272,46 @@ void writeFile(char* fname, char* buffer, int numSect)
     char* dirPtr = &dir[0];
     char* mapPtr = &map[0];
     char* endDir = &dir[511];
+    char* baseBuffer = &buffer[0];
     readSector(dir, 257);
     readSector(map, 256);
-    int i;
     char* openDir=-1;
     int sector;
-
-    while(dirPtr < endDir)
+    int i, j;
+    int limName= 7;
+    char lastChar = '\0';
+    for(i=0; i<8; ++i)
     {
-         if(*dirPtr!=0)
-         {
-            i=0;
-            while(i<8 && dirPtr[i] == fname[i]){++i;}
-
-            if(i<8)
-                dirPtr += 32;
-
-            else
+        if(fname[i] == lastChar)
+        {
+            limName = i;
+            break;
+        }
+    }
+    if(i==8)
+       lastChar = fname[7];
+    while(dirPtr<endDir)
+    {
+        if(dirPtr[limName] != fname[limName] || dirPtr[0]== 0)
+        {
+            if(openDir<0 && dirPtr[0]==0)
+                openDir = dirPtr;
+            dirPtr +=32;
+        }
+        for(i=1; i<limName; ++i)
+        {
+            if(dirPtr[i]!=fname[i])
             {
-                interrupt(33,15,1,0,0);
-                return;
+                dirPtr +=32;
+                i=-1;
+                break;    
             }
-         }
-         else
-         {
-            if(openDir<0)
-                openDir=dirPtr;
-
-            dirPtr += 32;
-         }
+        }
+        if(i>0)
+        {
+            interrupt(33,15,1,0,0);
+            return;
+        }
     }
     do
     {
@@ -311,22 +322,24 @@ void writeFile(char* fname, char* buffer, int numSect)
                 mapPtr[i]=0xFF;
                 sector = i + 1;
             }
-
             else
             {
                 interrupt(33,15,2,0,0);
                 return;
             }
 
-        for(i=0; i<32; ++i)
-            openDir[i] = 0;
-
-        for(i=0; i<8; ++i)
-            openDir[i] = fname[i];
-
+        if(buffer==baseBuffer)
+        {
+            for(i=0; i<32; ++i)
+                openDir[i] = 0;
+            for(i=0; i<limName; ++i)
+                openDir[i] = fname[i];
+            openDir += 8;
+        }
+        openDir[limName] = lastChar;
         writeSector(buffer, sector);
         buffer += 512;
-        }while(*buffer==0);
+        }while(*buffer!=0);
     
     writeSector(dir, 257);
     writeSector(map, 256);
