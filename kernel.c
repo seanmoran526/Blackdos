@@ -235,11 +235,44 @@ void readFile(char* fname, char* buffer, int* size)
         }
     else
         interrupt(33, 15, 0, 0, 0);
+    size = buffer/512;
     return;
 }
 
 void writeFile(char* fname, char* buffer, int numSect)
 {
+    char dir[512];
+    char map[512];
+    readSector(dir, 257);
+    readSector(map, 256);
+    int i=0;
+    int j=0;
+    int k;
+    int openSec;
+    while(j<16 && map[i++]==0xFF && dir[j++]==fname[0]){j+=31;}
+    if(j%2 == 0)
+    {
+        if(j<16)
+        {
+            k=1;
+            ++j;
+            while(j<8 && dir[j] != fname[k]){++j; ++k;}
+            if(k==8)
+            {
+                interrupt(33, 15, 1, 0, 0);
+                return;
+            }
+        }
+        else
+        {
+             while(i<512 && map[i]==0xFF){++i;}
+                if(i==512)
+                {
+                    interrupt(33,15,2,0,0);
+                    return;
+                }
+        }
+    }
     
 }
 
