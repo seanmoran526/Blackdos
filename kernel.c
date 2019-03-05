@@ -213,29 +213,37 @@ void clearScreen(int back,int fore)
 void readFile(char* fname, char* buffer, int* size)
 {
     char dir[512];
+    char* endDir = &dir[511];
     readSector(dir, 257);
-    int i=0;
-    int foundIndex=-1;
-    while(foundIndex<0 && i<512)
+    int i, j;
+    char* found=-1;
+    while(found<0 && dir<=endDir)
     {    
-        int j=0;
-        while(j<8 && dir[i++] != fname[j++]){}
-        if(j==8)
-            foundIndex = i;
+        if(*dir==0)
+            dir += 32;
         else
-            i = i - j + 32;
-    }
-    if(foundIndex>0)
-    {
-        while(dir[foundIndex]>0 && foundIndex%32 != 0)
         {
-            readSector(buffer, dir[foundIndex]);
+            i=0;
+            while(i==8 && dir[i] != fname[i]){++i;}
+            if(i<8)
+                dir += 32;
+            else
+                found = dir + 8;
+        }
+    }
+    if(found>0)
+    {
+        j=0;
+        while(j<24 && found[j] != 0x00;)
+        {
+            readSector(buffer, found[j]);
             ++foundIndex;
-            buffer += 512;
+            buffer+=512;
+            ++j;
         }
     else
         interrupt(33, 15, 0, 0, 0);
-    size = buffer/512;
+    size = j;
     return;
 }
 
@@ -243,39 +251,28 @@ void writeFile(char* fname, char* buffer, int numSect)
 {
     char dir[512];
     char map[512];
+    char endDir* = &dir[511];
     readSector(dir, 257);
     readSector(map, 256);
     int i=0;
-    int j=0;
-    int k;
-    int openSec;
-    while(j<16 && map[i++]==0xFF && dir[j++]==fname[0]){j+=31;}
-    if(j%2 == 0)
+    while(i<512 && map[i] == 0xFF)
     {
-        if(j<16)
+        if(i<512)
         {
-            k=1;
-            ++j;
-            while(j<8 && dir[j] != fname[k]){++j; ++k;}
-            if(k==8)
-            {
-                interrupt(33, 15, 1, 0, 0);
-                return;
-            }
-        }
+            map += i;
+        } 
         else
         {
-             while(i<512 && map[i]==0xFF){++i;}
-                if(i==512)
-                {
-                    interrupt(33,15,2,0,0);
-                    return;
-                }
+            interrupt(33,15,2,0,0);
+            return;
         }
+        ++i;
     }
-    
-}
-
+    i=0;
+    while(dir <= endDir)
+    {
+           
+    }
 void deleteFile(char* fname)
 {
 
