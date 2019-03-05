@@ -256,6 +256,7 @@ void writeFile(char* fname, char* buffer, int numSect)
     readSector(map, 256);
     int i;
     char* openDir=-1;
+    int sector;
     while(dir < endDir)
     {
          if(*dir!=0)
@@ -283,16 +284,23 @@ void writeFile(char* fname, char* buffer, int numSect)
         while(i<512 && map[i] == 0xFF){++i;}
             if(i<512)
             {
-                map += i;
+                map[i]=0xFF;
+                sector = i + 1;
             } 
             else
             {
                 interrupt(33,15,2,0,0);
                 return;
             }
-        *map=0xFF;
-        openDir
+        for(i=0; i<32; ++i)
+            openDir[i] = 0;
+        for(i=0; i<8; ++i)
+            openDir[i] = fname[i];
+        writeSector(buffer, sector);
+        buffer += 512;
         }while(*buffer==0);
+    writeSector(dir, 257);
+    writeSector(map, 256);
 void deleteFile(char* fname)
 {
 
