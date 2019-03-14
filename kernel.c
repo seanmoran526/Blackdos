@@ -65,8 +65,8 @@ void main()
  interrupt(33,2,buffer,258,0);
  interrupt(33,12,buffer[0]+1,buffer[1]+1,0);
  printLogo();
- interrupt(33,4,”kitty1\0”,2,0);
- interrupt(33,0,”Error if this executes.\r\n\0”,0,0);
+ interrupt(33,4,"kitty1\0",2,0);
+ interrupt(33,0,"Error if this executes.\r\n\0",0,0);
  while (1) ;
 }
 void printString(char* chArr, int printer)
@@ -258,7 +258,7 @@ void readFile(char* fname, char* buffer, int* size)
         }
         ++dirIndex;
     }
- `  interrupt(33,15,0,0,0);
+    interrupt(33,15,0,0,0);
     return;
 }
 
@@ -273,6 +273,7 @@ void writeFile(char* fname, char* buffer, int numSect)
     int i = 0;
     int j = 0;
     int openSec=-1;
+    int bufIndex=0;
     readSector(dir, 257);
     readSector(map, 256);
     while(dirIndex<16)
@@ -289,7 +290,7 @@ void writeFile(char* fname, char* buffer, int numSect)
                     ++j;
                 }
                 openDir+=8;
-            } 
+            }
         }
         if(charComp(fname, &dir[dirIndex*32])<0)
         {
@@ -330,15 +331,16 @@ void writeFile(char* fname, char* buffer, int numSect)
         }
     }while(flag==1);
     return;
-}          
+}
 
 void deleteFile(char* fname)
 {
+    int secIndex=0;
+    int dirIndex=0;
     char dir[512];
     char map[512];
     readSector(dir, 257);
     readSector(map, 256);
-    int dirIndex=0;
     readSector(dir, 257);
     while(dirIndex<16)
     {
