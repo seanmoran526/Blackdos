@@ -407,6 +407,7 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
       case 6: writeSector(bx,cx); break;
       case 7: deleteFile(bx); break;
       case 8: writeFile(bx,cx,dx); break;
+      case 11: interrupt(25,0,0,0,0); break;
       case 12: clearScreen(bx,cx); break;
       case 13: writeInt(bx,cx); break;
       case 14: readInt(bx); break;
