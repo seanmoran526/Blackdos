@@ -49,7 +49,9 @@ int mod(int, int);
 int div(int, int);
 void readString(char*);
 void writeSector(char*,int);
-int charComp(char*, char*);
+int findFile(char*, char*);
+int openDirIndex(char*);
+int openSector(char*);
 void clearScreen(int,int);
 void error(int);
 void readFile(char*, char*, int*);
@@ -217,22 +219,57 @@ void clearScreen(int back,int fore)
     }
 }
 
-int charComp(char* fname, char* dirName)
+int openSector(char* map)
 {
-    int i=0;
-    while(fname[i] != '\0' && i<8)
+    int i;
+    for(i=0; i<512; ++i)
     {
-        if(fname[i]==dirName[i])
+        if(map[i] == 0x00)
         {
-            ++i;
-        }
-        else
-        {
-            i=0;
-            break;
+            return i;
         }
     }
-    return i;
+    return -1;
+}
+
+
+int openDirIndex(char* dir)
+{
+    int i, j;
+    for(i=0; i<512; i+=32)
+    {
+        if(dir[i]=='\0')
+        {
+            for(j=1; j<8; ++j)
+            {
+                dir[i+j]= '\0';
+            }
+            return i;
+        }
+    }
+    return -1;
+}
+
+int findFile(char* dir, char* fname)
+{
+    int i, j, found;
+    for(i=0; i<512; i+=32)
+    {
+        found=1;
+        for(j=0; j<8; ++j)
+        {
+            if(dir[i+j] != fname[j])
+            {
+                found = 0;
+                break;
+            }
+        }
+        if(found==1)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
 void readFile(char* fname, char* buffer, int* size)
