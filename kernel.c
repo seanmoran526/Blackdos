@@ -47,7 +47,7 @@ void printString(char* c, int d);
 void writeInt(int, int);
 int mod(int, int);
 int div(int, int);
-void readString(char*);
+void readSector(char*, int)
 void writeSector(char*,int);
 int findFile(char*, char*);
 int openDirIndex(char*);
@@ -62,7 +62,7 @@ void stop();
 
 void main()
 {
- char buffer[512];
+ char buffer[12288]
  makeInterrupt21();
  interrupt(33,2,buffer,258,0);
  interrupt(33,12,buffer[0]+1,buffer[1]+1,0);
@@ -275,27 +275,23 @@ int findFile(char* dir, char* fname)
 void readFile(char* fname, char* buffer, int* size)
 {
     char dir[512];
-    int dirIndex=0;
-    int found=0;
-    int secIndex=0;
-    int bufIndex=0;
-    readSector(dir, 257);
-    while(dirIndex<16)
+    int dirIndex, bufIndex;
+    interrupt(33,2,dir,257,0);
+    dirIndex = findFile(dir, fname);
+    if(dirIndex==-1)
     {
-        if(charComp(fname, &dir[dirIndex*32])>0)
-        {
-            secIndex = (dirIndex*32) + 8;
-            while(dir[secIndex]!=0 && bufIndex<12288)
-            {
-                    readSector(&buffer[bufIndex], dir[secIndex]);
-                    ++secIndex;
-                    bufIndex+=512;
-            }
-            return;
-        }
-        ++dirIndex;
+        interrupt(33,15,0,0,0);
+        return;
     }
-    interrupt(33,15,0,0,0);
+    dirIndex+=8;
+    for(bufIndex=0; bufIndex<12288; bufIndex+=512)
+    {
+        if(dir[dirIndex]==0)
+        {
+            break;
+        }
+        interrupt(33, 2, &buffer[bufIndex], dir[dirIndex], 0);
+    }
     return;
 }
 
@@ -303,100 +299,64 @@ void writeFile(char* fname, char* buffer, int numSect)
 {
     char dir[512];
     char map[512];
-    int dirIndex=0;
-    int openDir=-1;
-    int k;
-    int flag=1;
-    int i = 0;
-    int j = 0;
-    int openSec=-1;
-    int bufIndex=0;
-    readSector(dir, 257);
-    readSector(map, 256);
-    while(dirIndex<16)
+    int dirIndex, mapIndex, j;
+    int i=0;
+    interrupt(33,2,dir,257,0);
+    interrupt(33,2,map,256,0);
+    do
     {
-        while(dir[dirIndex*32]==0)
-        {
-            ++dirIndex;
-            if(openDir<0)
-            {
-                openDir=(dirIndex-1)*32;
-                while(j<8)
-                {
-                    dir[openDir] = fname[j];
-                    ++j;
-                }
-                openDir+=8;
-            }
-        }
-        if(charComp(fname, &dir[dirIndex*32])<0)
+        if(findFile(dir, fname)!=-1)
         {
             interrupt(33,15,1,0,0);
             return;
         }
-        ++dirIndex;
-    }
-    if(openDir<0)
+        dirIndex=openDirIndex(dir);
+        mapIndex = openSect(map);
+        if(mapIndex==-1 || dirIndex==-1)
+        {
+            interrupt(33,15,2,0,0);
+            return;
+        }
+        map[mapIndex] = 0xFFFF;
+        dir[dirIndex+8+i]= mapIndex + 1;
+        dir[dirIndex+9+i]= '\0';
+        for(j=0; j<8 && fname[j]!='\0'; ++j)
+        {
+            dir[dirIndex+j] = fname[j];
+        }
+        interrupt(33, 6, buffer, mapIndex+1, 0);
+        buffer+=512;
+        ++i;
+    }while(i<numSect);
+    interrupt(33, 6, map, 256, 0);
+    interrupt(33, 6, dir, 257, 0);
+    return;
+}
+
+
+
+void deleteFile(char* fname)
+{
+    char dir[512];
+    char map[512];
+    int dirIndex, mapIndex, i;
+    interrupt(33,2,dir,257,0);
+    interrupt(33,2,map,256,0);
+    dirIndex = findFile(dir, fname);
+    if(dirIndex==-1)
     {
         interrupt(33,15,1,0,0);
         return;
     }
-
-    bufIndex=0;
-    do
+    dir[dirIndex] = 0x0000;
+    dirIndex+=8;
+    for(i=0; i<24 && dir[dirIndex]!=0; ++i)
     {
-        while(map[i]==0 && i<511)
-        {
-            ++i;
-        }
-        if(i>511)
-        {
-            interrupt(33,15,2,0,0);
-            flag=0;
-        }
-        else
-        {
-            dir[openDir]= i + 1;
-            dir[openDir+1]= 0;
-            dir[openDir+2]= 0;
-            ++openDir;
-            map[i]= 0xFF;
-            writeSector(map, 256);
-            writeSector(dir, 258);
-            writeSector(&buffer[bufIndex], i+1);
-            flag==0;
-        }
-    }while(flag==1);
-    return;
-}
-
-void deleteFile(char* fname)
-{
-    int secIndex=0;
-    int dirIndex=0;
-    char dir[512];
-    char map[512];
-    readSector(dir, 257);
-    readSector(map, 256);
-    readSector(dir, 257);
-    while(dirIndex<16)
-    {
-        if(charComp(fname, &dir[dirIndex*32])>0)
-        {
-            dir[0]=0;
-            secIndex = (dirIndex*32) + 8;
-            while(secIndex - dirIndex < 32)
-            {
-                    map[dir[secIndex]]=0x00;
-                    dir[secIndex]=0x00;
-                    ++secIndex;
-            }
-        }
-        else
-        {
-            interrupt(33,15,0,0,0);
-        }
+        mapIndex = dir[dirIndex+i] - 1;
+        map[mapIndex] = 0x0000;
     }
+    interrupt(33, 6, map, 256, 0);
+    interrupt(33, 6, dir, 257, 0);
     return;
 }
 
