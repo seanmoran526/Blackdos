@@ -362,16 +362,21 @@ void deleteFile(char* fname)
 
 void runProgram(char* fname, int segment)
 {
-    char buffer[4000];
-    int offset=0;
+    char buffer[4096];
+    int offset;
+    if(segment<0 || segment>9)
+    {
+        interrupt(33,15,4,0,0);
+        return;
+    }
     int base = segment*4096;
-    readFile(fname, buffer, 1);
-    while(offset<4000)
+    interrupt(33,3,fname,buffer,1);
+    for(offset=0; offset<4096; ++offset)
     {
         putInMemory(base, offset, buffer[offset]);
-        ++offset;
     }
-    launchProgram(base);
+    launchProgram(segment);
+    return;
 }
 
 void stop(){while(1);}
@@ -385,7 +390,7 @@ void error(int bx)
         case 2: interrupt(33,PRINTSTR,"Disk full \r\n\0",0,0); break;
         default: interrupt(33,PRINTSTR,"General error \r\n\0",0,0);
     }
-    stop();
+    interrupt(33,5,0,0,0);
 }
 
 
