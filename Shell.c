@@ -40,27 +40,27 @@ void fileInfo(char* dir, char** filenames, int* sizes)
         {
             for(j=0; j<24; ++j)
             {
-                if(dir[dirIndex+8+j]==0)
+                if(dir[dirInd+8+j]==0)
                 {
                     break;
                 }
             }
             sizes[17]+= j;
-            dirIndex+=32;
+            dirInd+=32;
         }
         else
         {
             filenames[i] = &dir[dirInd];
             for(j=0; j<24; ++j)
             {
-                if(dir[dirIndex+8+j]==0)
+                if(dir[dirInd+8+j]==0)
                 {
                     break;
                 }
             }
             sizes[i] = j;
             sizes[17]+= j;
-            dirIndex+=32;
+            dirInd+=32;
         }
     }
 }
@@ -130,14 +130,14 @@ int interpret(char* input, char** filenames, int* sizes, char* buffer)
         {
             if(strCmp(file1,filenames[i],8))
             {
-                size = size[i];
                 found = 1;
+                break;
             }
         }
         if(found && file2[0]>='a')
         {
-            interrupt(33,3,file1,buffer, &size);
-            interrupt(33,8,file2,buffer, size);
+            interrupt(33,3,file1,buffer, &size[i]);
+            interrupt(33,8,file2,buffer, size[i]);
         }
         else 
         {
