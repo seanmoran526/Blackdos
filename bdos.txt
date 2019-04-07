@@ -1,6 +1,5 @@
 # Bochs configuration file for Xterm output
 config_interface: textconfig
-display_library: x
 romimage: file=$BXSHARE/BIOS-bochs-latest 
 megs: 32
 vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
