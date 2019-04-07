@@ -1,15 +1,15 @@
 void fileInfo(char*, char**, int*);
 int spaceIndex(char*);
 int strCmp(char*, char*, int);
-int interpret(char*,char**, int*, char*)
+int interpret(char*,char**, int*, char*);
 
 void main()
 {
     char buffer[12288];
     char dir[512];
-    char input[200]={0};
-    char* filenames[16]={0};
-    int sizes[17]={0};
+    char input[200];
+    char* filenames[16];
+    int sizes[17];
     int commandFlag;
     interrupt(33,0,"    Welcome to BlackDos Command Shell \r\n\0",0,0);
     while(1)
