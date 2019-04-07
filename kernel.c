@@ -363,7 +363,7 @@ void deleteFile(char* fname)
 
 void runProgram(char* fname, int segment)
 {
-    char buffer[4096];
+    char buffer[13312];
     int offset, base, size;
     if(segment<0 || segment>9)
     {
@@ -372,12 +372,11 @@ void runProgram(char* fname, int segment)
     }
     base = segment*4096;
     interrupt(33,3,fname,buffer,&size);
-    for(offset=0; offset<4096; ++offset)
+    for(offset=0; offset<13312; ++offset)
     {
         putInMemory(base, offset, buffer[offset]);
     }
     launchProgram(base);
-    stop();
 }
 
 void stop(){launchProgram(8192);}
