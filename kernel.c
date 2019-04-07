@@ -311,7 +311,7 @@ void writeFile(char* fname, char* buffer, int numSect)
             return;
         }
         dirIndex=openDirIndex(dir);
-        mapIndex = openSect(map);
+        mapIndex = openSector(map);
         if(mapIndex==-1 || dirIndex==-1)
         {
             interrupt(33,15,2,0,0);
