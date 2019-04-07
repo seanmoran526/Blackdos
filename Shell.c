@@ -91,7 +91,7 @@ int interpret(char* input, char** filenames, int* sizes, char* buffer)
 {
     char file1[8];
     char file2[8];
-    int i, end, size;
+    int i, end, numSect;
     int found = 0;
     int total = 0;
     int free=0;
@@ -131,13 +131,14 @@ int interpret(char* input, char** filenames, int* sizes, char* buffer)
             if(strCmp(file1,filenames[i],8))
             {
                 found = 1;
+                numSect=sizes[i];
                 break;
             }
         }
         if(found && file2[0]>='a')
         {
-            interrupt(33,3,file1,buffer, &size[i]);
-            interrupt(33,8,file2,buffer, size[i]);
+            interrupt(33,3,file1,buffer, &numSect);
+            interrupt(33,8,file2,buffer, numSect);
         }
         else 
         {
