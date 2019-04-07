@@ -10,13 +10,13 @@ void main()
     char input[200];
     char* filenames[16];
     int sizes[17];
-    sizes[16]= 0;
     int commandFlag;
     int k;
     for(k=0; k<16; ++k)
     {
         filenames[k] = '\0';   
     }
+    sizes[16]= 0;
     interrupt(33,0,"    Welcome to BlackDos Command Shell \r\n\0",0,0);
     while(1)
     {
