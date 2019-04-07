@@ -291,6 +291,7 @@ void readFile(char* fname, char* buffer, int* size)
             break;
         }
         interrupt(33, 2, &buffer[bufIndex], dir[dirIndex], 0);
+        ++dirIndex;
     }
     return;
 }
@@ -363,20 +364,20 @@ void deleteFile(char* fname)
 void runProgram(char* fname, int segment)
 {
     char buffer[4096];
-    int offset, base;
+    int offset, base, size;
     if(segment<0 || segment>9)
     {
         interrupt(33,15,4,0,0);
         return;
     }
     base = segment*4096;
-    interrupt(33,3,fname,buffer,1);
+    interrupt(33,3,fname,buffer,&size);
     for(offset=0; offset<4096; ++offset)
     {
         putInMemory(base, offset, buffer[offset]);
     }
     launchProgram(base);
-    return;
+    stop();
 }
 
 void stop(){launchProgram(8192);}
