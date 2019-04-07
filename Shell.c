@@ -200,7 +200,7 @@ int interpret(char* input, char** filenames, int* sizes, char* buffer)
             interrupt(33,0,"    Invalid Command \r\n\0",0,0);
             return 1;
         }
-        interrupt(33,3,&input[5],buffer,&size);
+        interrupt(33,3,&input[5],buffer,sizes);
         interrupt(33,0,buffer,1,0);
     }
     else if(strCmp(input, "remv", 4))
@@ -223,7 +223,7 @@ int interpret(char* input, char** filenames, int* sizes, char* buffer)
             interrupt(33,0,"    Invalid Command \r\n\0",0,0);
             return 1;
         }
-        interrupt(33,3,&input[5],buffer,&size)
+        interrupt(33,3,&input[5],buffer,&size);
         interrupt(33,0,buffer,0,0);
     }   
     else if(strCmp(input, "twet", 4))
@@ -233,7 +233,7 @@ int interpret(char* input, char** filenames, int* sizes, char* buffer)
             interrupt(33,0,"    Invalid Command \r\n\0",0,0);
             return 1;
         }
-        interrupt(33,0,"Input line of text less that 140 characters:  ")
+        interrupt(33,0,"Input line of text less that 140 characters:  \0",0,0);
         interrupt(33,1,buffer,0,0);
         buffer[141]='\0';
         interrupt(33,0,buffer,0,0);
