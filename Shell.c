@@ -34,7 +34,7 @@ void fileInfo(char* dir, char** filenames, int* sizes)
     {
         if(dir[dirInd]=='\0')
         {
-            dirIndex+=32;
+            dirInd+=32;
         }
         else if(dir[dirInd]<'a')
         {
@@ -89,13 +89,14 @@ int strCmp(char* a, char* b, int length)
 }
 int interpret(char* input, char** filenames, int* sizes, char* buffer)
 {
-    char file1[8]={0};
-    char file2[8]={0};
+    char file1[8];
+    char file2[8];
     int i, end, size;
     int found = 0;
     int total = 0;
     int free=0;
-    if(spaceIndex(input)!=4)
+    int spaceInd = spaceIndex(input);
+    if(spaceInd!=4)
     {
         interrupt(33,0,"    Invalid Command \r\n\0",0,0);
         return 1;
@@ -112,7 +113,7 @@ int interpret(char* input, char** filenames, int* sizes, char* buffer)
     else if(strCmp(input, "copy", 4))
     {
         end = spaceIndex(&input[5]);
-        if(end>14)
+        if(end>8)
         {
             interrupt(33,0,"    Invalid Command \r\n\0",0,0);
             return 1;
