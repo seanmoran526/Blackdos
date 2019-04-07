@@ -11,3 +11,4 @@ as86 lib.asm -o lib_asm.o
 ld86 -o Shell -d Shell.o lib_asm.o
 gcc -o loadFile loadFile.c
 ./loadFile Shell
+./loadFile Stenv
