@@ -189,6 +189,7 @@ int interpret(char* input, char** filenames, int* sizes, char* buffer)
         interrupt(33,0,"show filename: displays file content on screen \r\n\0",0,0);
         interrupt(33,0,"twet filename: creates text file of 140 characters of less \r\n\0",0,0);
         interrupt(33,0,"Press Enter to continue r\n\0",0,0);
+        interrupt(33,1,buffer,0,0);
     }
     else if(strCmp(input, "prnt", 4))
     {
