@@ -47,7 +47,7 @@ void printString(char* c, int d);
 void writeInt(int, int);
 int mod(int, int);
 int div(int, int);
-void readSector(char*, int)
+void readSector(char*, int);
 void writeSector(char*,int);
 int findFile(char*, char*);
 int openDirIndex(char*);
