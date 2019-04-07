@@ -414,4 +414,5 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
       case 15: error(bx); break;
       default: printString("General BlackDOS error.\r\n\0", 0);
    }
+   return;
 }
