@@ -294,7 +294,8 @@ void readFile(char* fname, char* buffer, int* size)
     {
         if(dir[dirIndex]>0)
         {
-           readSector(&buffer[bufIndex], dir[dirIndex]);
+           interrupt(33,PRINTSTR,"Sector Read. \r\n\0",0,0); 
+           interrupt(33,2,&buffer[bufIndex], dir[dirIndex],0);
            ++dirIndex;
         }
         else
