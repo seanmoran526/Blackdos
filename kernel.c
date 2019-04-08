@@ -292,7 +292,7 @@ void readFile(char* fname, char* buffer, int* size)
     dirIndex+=8;
     for(bufIndex=0; bufIndex<12288; bufIndex+=512)
     {
-        if(dir[dirIndex]==0)
+        if(dir[dirIndex]<1)
         {
             break;
         }
