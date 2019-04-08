@@ -377,7 +377,7 @@ void runProgram(char* fname, int segment)
         interrupt(33,15,4,0,0);
         return;
     }
-    base = segment*4096;
+    base = segment*0x1000;
     interrupt(33,PRINTSTR,"Before readFile \r\n\0",0,0);
     readFile(fname,buffer,&size);
     interrupt(33,PRINTSTR,"after readFile \r\n\0",0,0);
