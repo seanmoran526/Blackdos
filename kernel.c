@@ -281,7 +281,6 @@ int findFile(char* dir, char* fname)
 void readFile(char* fname, char* buffer, int* size)
 {
     char dir[512];
-    char sect[24];
     int dirIndex, bufIndex;
     readSector(dir,257);
     dirIndex = findFile(dir, fname);
@@ -293,17 +292,17 @@ void readFile(char* fname, char* buffer, int* size)
     dirIndex+=8;
     for(bufIndex=0; bufIndex<12288; bufIndex+=512)
     {
-        if(dir[dirIndex]<1)
+        if(dir[dirIndex]>0)
         {
-            break;
+           readSector(&buffer[bufIndex], dir[dirIndex]);
+           ++dirIndex;
         }
-        sect[bufIndex/512]= dir[dirIndex]+ '0';
-        readSector(&buffer[bufIndex], dir[dirIndex]);
-        ++dirIndex;
+        else
+        {
+           interrupt(33,PRINTSTR,"Hit Zero. \r\n\0",0,0);
+           return;
+        }
     }
-    sect[bufIndex/512]= '\0';
-    interrupt(33,0,sect,0,0);
-    return;
 }
 
 void writeFile(char* fname, char* buffer, int numSect)
