@@ -224,7 +224,7 @@ void clearScreen(int back,int fore)
 int strCmp(char* a, char* b, int length)
 {
     int i;
-    for(i=0; i<length; ++i)
+    for(i=0; i<length && b[i]!='\0'; ++i)
     {
         if(a[i] != b[i])
         {
