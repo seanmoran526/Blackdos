@@ -12,6 +12,7 @@ void main()
     int sizes[17];
     int commandFlag;
     int k;
+    interrupt(33,0,"    after launch \r\n\0",0,0);
     for(k=0; k<16; ++k)
     {
         filenames[k] = '\0';   
