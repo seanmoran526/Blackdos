@@ -282,7 +282,7 @@ void readFile(char* fname, char* buffer, int* size)
 {
     char dir[512];
     int dirIndex, bufIndex;
-    readSect(dir,257);
+    readSector(dir,257);
     dirIndex = findFile(dir, fname);
     if(dirIndex==-1)
     {
