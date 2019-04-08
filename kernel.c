@@ -282,6 +282,7 @@ void readFile(char* fname, char* buffer, int* size)
 {
     char dir[512];
     int dirIndex, bufIndex;
+    *size=0;
     readSector(dir,257);
     dirIndex = findFile(dir, fname);
     if(dirIndex==-1)
@@ -297,6 +298,7 @@ void readFile(char* fname, char* buffer, int* size)
            interrupt(33,PRINTSTR,"Sector Read. \r\n\0",0,0); 
            interrupt(33,2,&buffer[bufIndex], dir[dirIndex],0);
            ++dirIndex;
+           *size+=512;
         }
         else
         {
@@ -384,7 +386,7 @@ void runProgram(char* fname, int segment)
     interrupt(33,PRINTSTR,"Before readFile \r\n\0",0,0);
     readFile(fname,buffer,&size);
     interrupt(33,PRINTSTR,"after readFile \r\n\0",0,0);
-    for(offset=0; offset<13312; ++offset)
+    for(offset=0; offset<size; ++offset)
     {
         putInMemory(base, offset, buffer[offset]);
     }
