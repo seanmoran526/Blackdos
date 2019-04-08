@@ -68,6 +68,7 @@ void main()
  interrupt(33,2,buffer,258,0);
  interrupt(33,12,buffer[0]+1,buffer[1]+1,0);
  printLogo();
+ interrupt(33,4, "kitty1\0" ,2,0);
  interrupt(33,PRINTSTR,"Before Shell Call \r\n\0",0,0);
  interrupt(33,4, "Shell\0" ,2,0);
  interrupt(33,0,"Bad or missing command interpreter.\r\n\0",0,0);
