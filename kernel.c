@@ -270,7 +270,7 @@ int findFile(char* dir, char* fname)
     int i;
     for(i=0; i<512; i+=32)
     {
-         if(strCmp(&dir[i],fname,8)
+         if(strCmp(&dir[i],fname,8))
          {
              return i;
          }
