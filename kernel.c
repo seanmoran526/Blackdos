@@ -49,6 +49,7 @@ int mod(int, int);
 int div(int, int);
 void readSector(char*, int);
 void writeSector(char*,int);
+int strCmp(char*, char*, int);
 int findFile(char*, char*);
 int openDirIndex(char*);
 int openSector(char*);
@@ -219,6 +220,19 @@ void clearScreen(int back,int fore)
     }
 }
 
+int strCmp(char* a, char* b, int length)
+{
+    int i;
+    for(i=0; i<length; ++i)
+    {
+        if(a[i] != b[i])
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int openSector(char* map)
 {
     int i;
@@ -252,22 +266,13 @@ int openDirIndex(char* dir)
 
 int findFile(char* dir, char* fname)
 {
-    int i, j, found;
+    int i;
     for(i=0; i<512; i+=32)
     {
-        found=1;
-        for(j=0; j<8; ++j)
-        {
-            if(dir[i+j] != fname[j])
-            {
-                found = 0;
-                break;
-            }
-        }
-        if(found==1)
-        {
-            return i;
-        }
+         if(strCmp(&dir[i],fname,8)
+         {
+             return i;
+         }
     }
     return -1;
 }
@@ -290,7 +295,7 @@ void readFile(char* fname, char* buffer, int* size)
         {
             break;
         }
-        interrupt(33, 2, &buffer[bufIndex], dir[dirIndex], 0);
+        readSector(&buffer[bufIndex], dir[dirIndex]);
         ++dirIndex;
     }
     return;
