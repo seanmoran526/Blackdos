@@ -281,7 +281,7 @@ void readFile(char* fname, char* buffer, int* size)
 {
     char dir[512];
     int dirIndex, bufIndex;
-    interrupt(33,2,dir,257,0);
+    readSect(dir,257);
     dirIndex = findFile(dir, fname);
     if(dirIndex==-1)
     {
@@ -381,6 +381,7 @@ void runProgram(char* fname, int segment)
     {
         putInMemory(base, offset, buffer[offset]);
     }
+    printString("got to here \0",0);
     launchProgram(base);
 }
 
