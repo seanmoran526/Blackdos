@@ -391,7 +391,7 @@ void runProgram(char* fname, int segment)
         putInMemory(base, offset, buffer[offset]);
     }
     interrupt(33,PRINTSTR,"Before Launch \r\n\0",0,0);
-    launchProgram(base);
+    launchProgram(8192);
 }
 
 void stop(){launchProgram(8192);}
