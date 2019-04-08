@@ -298,10 +298,10 @@ void readFile(char* fname, char* buffer, int* size)
            interrupt(33,PRINTSTR,"Sector Read. \r\n\0",0,0); 
            interrupt(33,2,&buffer[bufIndex], dir[dirIndex],0);
            ++dirIndex;
-           *size+=512;
         }
         else
         {
+           *size=bufIndex;
            interrupt(33,PRINTSTR,"Hit Zero. \r\n\0",0,0);
            return;
         }
@@ -382,9 +382,9 @@ void runProgram(char* fname, int segment)
         interrupt(33,15,4,0,0);
         return;
     }
-    base = segment*0x1000;
+    base = segment*4096;
     interrupt(33,PRINTSTR,"Before readFile \r\n\0",0,0);
-    readFile(fname,buffer,&size);
+    interrupt(33,3,fname,buffer,&size);
     interrupt(33,PRINTSTR,"after readFile \r\n\0",0,0);
     for(offset=0; offset<size; ++offset)
     {
