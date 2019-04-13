@@ -7,7 +7,6 @@ void main()
     char buffer[12288];
     char dir[512];
     char command[150];
-    int getLength(char*);
     char* str1, str2;
     int length;
     PRINTS("Welcome to Blackdos \r\n\0");
@@ -85,14 +84,18 @@ void main()
 
 int strCmp(char* a, char* b)
 {
-    int i;
-    for(i=0; a[i]!='\0'; ++i)
+  int i = 0;
+  int same = 1;
+  while(a[i] != '\0')
+  {
+    if(a[i] != b[i])
     {
-        if(a[i] != b[i])
-        {
-            return 0;
-        }
+      same = 0;
+      break;
     }
-    return 1;
+    ++i;
+  }
+  return same;
 }
+
 
